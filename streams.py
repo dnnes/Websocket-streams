@@ -1,10 +1,12 @@
 import asyncio
 import asyncio.exceptions
+from decimal import Decimal
 import json
 import logging
 import multiprocessing
 import websockets
 import websockets.exceptions
+import boto3
 
 #from threading import *
 from multiprocessing import Pipe, Process, Queue, Manager
@@ -12,7 +14,7 @@ from time import sleep
 
 class GetStream:
     
-    def __init__(self, uri:str, subscribe:list = None, queue:Pipe= None) -> None:
+    def __init__(self, uri:str, subscribe:list = None, queue:Queue = None) -> None:
         self.wss_url = uri
         self.channels = subscribe
         self.q = queue
@@ -33,7 +35,7 @@ class GetStream:
     #open websocket connection, subscribe to channels, create and await main tasks (messages handler and send ping)
     async def connect_ws(self, wss_url, channels) -> None:
 
-        logging.info('Trying connect to server.')
+        logging.info('Trying to connect to server.')
         
         async for ws in websockets.connect(wss_url, open_timeout=5):
             
@@ -58,7 +60,7 @@ class GetStream:
                 pass
     
     #iterates over all elements in channels list and send a json request
-    async def subscribe(self, ws:websockets, channels:list) ->None:
+    async def subscribe(self, ws:websockets, channels:list) -> None:
         for c in channels:
             try:
                 logging.info(f'sending {c}')
@@ -73,12 +75,12 @@ class GetStream:
     #Receives the data stream from multiple channels,
     #any db or message passing logic should be implemented here.
     #Remainder: async for... is a wrapper around common recv() loop
-    async def stream_handler(self, ws:websockets) ->None:
+    async def stream_handler(self, ws:websockets) -> None:
         logging.info('Stream handler thread set.')
         async for message in ws:
             #pass
             #print(message)
-            self.q.send(message)
+            self.q.put(message)
 
     
     async def get_echo(self, ws:websockets) -> None:
@@ -100,27 +102,43 @@ class GetStream:
 def to_db():
     logging.info("enter todb")
     while True:
-        print(p.recv())
+        message = json.loads(q.get(),  parse_float=Decimal)
+        print(message)
+
+        if message["channel"] == 'live_orders_btcusd':
+            #send to table
+            pass
+        
+        elif message["channel"] == 'live_trades_btcusd':
+            table.put_item(Item = message["data"])
+            #send trades table
+            print(message["channel"])
+            print(q.qsize())
+        
     
 
 if __name__ == "__main__":
+
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('bitstamp-net-live_trades_btcusd')
+    print(table.creation_date_time)
 
     #loggin.DEBUG will print EVERY message in stream
     logging.basicConfig(
         filename='scrap.log',
         format="%(asctime)s %(message)s",
-        level=logging.INFO)
+        level=logging.DEBUG)
     
     #this function get elements from queue and send to 
     #apropriate data base
     manager = multiprocessing.Manager()
-    p, q = Pipe()
+    q = manager.Queue()
     
     db_process = Process(target=to_db)
     db_process.start()
     
 
-    channels = [{"event": "bts:subscribe","data": {"channel": "live_orders_btcusd"}}]   
+    channels = [{"event": "bts:subscribe","data": {"channel": "live_trades_btcusd"}}]   
 
     bitstamp = GetStream("wss://ws.bitstamp.net", channels, q)
     bitstamp.initiate()
