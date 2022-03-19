@@ -2,17 +2,20 @@ import asyncio
 import asyncio.exceptions
 import json
 import logging
+import multiprocessing
 import websockets
 import websockets.exceptions
 
 #from threading import *
+from multiprocessing import Pipe, Process, Queue, Manager
 from time import sleep
 
 class GetStream:
     
-    def __init__(self, uri:str, subscribe:list = None) -> None:
+    def __init__(self, uri:str, subscribe:list = None, queue:Pipe= None) -> None:
         self.wss_url = uri
         self.channels = subscribe
+        self.q = queue
 
     #event loop entry point    
     def initiate(self) -> None:    
@@ -74,7 +77,8 @@ class GetStream:
         logging.info('Stream handler thread set.')
         async for message in ws:
             #pass
-            print(message)
+            #print(message)
+            self.q.send(message)
 
     
     async def get_echo(self, ws:websockets) -> None:
@@ -93,7 +97,11 @@ class GetStream:
                 raise
             
             
-        
+def to_db():
+    logging.info("enter todb")
+    while True:
+        print(p.recv())
+    
 
 if __name__ == "__main__":
 
@@ -103,11 +111,20 @@ if __name__ == "__main__":
         format="%(asctime)s %(message)s",
         level=logging.INFO)
     
+    #this function get elements from queue and send to 
+    #apropriate data base
+    manager = multiprocessing.Manager()
+    p, q = Pipe()
     
+    db_process = Process(target=to_db)
+    db_process.start()
+    
+
     channels = [{"event": "bts:subscribe","data": {"channel": "live_orders_btcusd"}}]   
 
-    bitstamp = GetStream("wss://ws.bitstamp.net", channels)
+    bitstamp = GetStream("wss://ws.bitstamp.net", channels, q)
     bitstamp.initiate()
+    
 
 
 
