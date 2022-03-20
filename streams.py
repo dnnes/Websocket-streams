@@ -24,7 +24,7 @@ class GetStream:
         try:
             asyncio.run(self.connect_ws(self.wss_url, self.channels))
         except KeyboardInterrupt:
-            logging.info('Closed by Ctrl-c. Bye!')
+            logging.info('Closed by Ctrl-c. Bye!\n')
         except:
             logging.error('The main loop was closed. Retrying to connect soon')
             sleep(5)
@@ -103,17 +103,13 @@ def to_db():
     logging.info("enter todb")
     while True:
         message = json.loads(q.get(),  parse_float=Decimal)
-        print(message)
-
-        if message["channel"] == 'live_orders_btcusd':
-            #send to table
-            pass
         
-        elif message["channel"] == 'live_trades_btcusd':
-            table.put_item(Item = message["data"])
-            #send trades table
-            print(message["channel"])
-            print(q.qsize())
+        message['data']['event'] = message['event']
+        message['data']['channel'] = message['channel']
+        table.put_item(Item = message['data'])
+        #send trades table
+        logging.info(message["channel"])
+        logging.info(q.qsize())
         
     
 
@@ -138,7 +134,10 @@ if __name__ == "__main__":
     db_process.start()
     
 
-    channels = [{"event": "bts:subscribe","data": {"channel": "live_trades_btcusd"}}]   
+    channels = [{"event": "bts:subscribe","data": {"channel": "live_trades_btcusd"}},
+                {"event": "bts:subscribe","data": {"channel": "live_trades_ethusd"}},
+                {"event": "bts:subscribe","data": {"channel": "live_orders_btcusd"}},
+                {"event": "bts:subscribe","data": {"channel": "live_orders_ethusd"}}]   
 
     bitstamp = GetStream("wss://ws.bitstamp.net", channels, q)
     bitstamp.initiate()
