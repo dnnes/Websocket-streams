@@ -26,7 +26,7 @@ class GetStream:
         except KeyboardInterrupt:
             logging.info('Closed by Ctrl-c. Bye!\n')
         except:
-            logging.error('The main loop was closed. Retrying to connect soon')
+            logging.error('The main loop was closed. Retrying to connect soon.')
             sleep(5)
             asyncio.run(self.connect_ws(self.wss_url, self.channels))
 
@@ -39,7 +39,7 @@ class GetStream:
         
         async for ws in websockets.connect(wss_url, open_timeout=5):
             
-            logging.info('Connection is open. Proceeding to \'subscribe\' function')
+            logging.info('Connection is open. Proceeding to \'subscribe\' function.')
             if not channels == None: await self.subscribe(ws, channels)
             
             #await ws.send(json.dumps(subscribe))
@@ -47,16 +47,16 @@ class GetStream:
             #await ws.send(json.dumps({"event": "bts:subscribe","data": {"channel": "live_trades_btcusd"}}))
             #print(await ws.recv())
             
-            logging.info('Creating tasks')
+            logging.info('Creating tasks.')
             stream_thread = await asyncio.to_thread(self.stream_handler, ws)  
             still_alive = asyncio.create_task(self.get_echo(ws), name = 'ping')
             
-            logging.info('Initiating tasks')
+            logging.info('Initiating tasks.')
             try:
                 await asyncio.gather(stream_thread, still_alive)
             except Exception as e:
                 print(e)
-                logging.error('An exception was caught. Maybe the connection was lost. Will iteratively retry connect to server')
+                logging.error('An exception was caught. Maybe the connection was lost. Will iteratively retry connect to server.')
                 pass
     
     #iterates over all elements in channels list and send a json request
@@ -77,14 +77,14 @@ class GetStream:
     #Remainder: async for... is a wrapper around common recv() loop
     async def stream_handler(self, ws:websockets) -> None:
         logging.info('Stream handler thread set.')
+        
         async for message in ws:
-            #pass
-            #print(message)
+
             self.q.put(message)
 
     
     async def get_echo(self, ws:websockets) -> None:
-        logging.info('Initiating ping task')
+        logging.info('Initiating ping task.')
         while True:
             try:
                 pong = await ws.ping()
@@ -102,31 +102,30 @@ class GetStream:
 def to_db():
     logging.info("enter todb")
     while True:
-        message = json.loads(q.get(),  parse_float=Decimal)
-        
-        message['data']['event'] = message['event']
-        message['data']['channel'] = message['channel']
-        table.put_item(Item = message['data'])
-        #send trades table
-        logging.info(message["channel"])
-        logging.info(q.qsize())
+        m = q.get()
+        message = json.loads(m,  parse_float=Decimal)
+        if not message['event'] == 'bts:subscription_suceeded':
+            message['data']['event'] = message['event']
+            message['data']['channel'] = message['channel']
+            
+            table.put_item(Item = message['data'])
+            
+            logging.info(q.qsize())
         
     
 
 if __name__ == "__main__":
 
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table('bitstamp-net-live_trades_btcusd')
-    print(table.creation_date_time)
+    table = dynamodb.Table('bitstamp-live')
+    
 
     #loggin.DEBUG will print EVERY message in stream
     logging.basicConfig(
         filename='scrap.log',
         format="%(asctime)s %(message)s",
         level=logging.DEBUG)
-    
-    #this function get elements from queue and send to 
-    #apropriate data base
+       
     manager = multiprocessing.Manager()
     q = manager.Queue()
     
@@ -137,7 +136,8 @@ if __name__ == "__main__":
     channels = [{"event": "bts:subscribe","data": {"channel": "live_trades_btcusd"}},
                 {"event": "bts:subscribe","data": {"channel": "live_trades_ethusd"}},
                 {"event": "bts:subscribe","data": {"channel": "live_orders_btcusd"}},
-                {"event": "bts:subscribe","data": {"channel": "live_orders_ethusd"}}]   
+                {"event": "bts:subscribe","data": {"channel": "live_orders_ethusd"}}
+                ]   
 
     bitstamp = GetStream("wss://ws.bitstamp.net", channels, q)
     bitstamp.initiate()
