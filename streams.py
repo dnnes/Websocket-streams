@@ -117,7 +117,7 @@ def to_db():
 if __name__ == "__main__":
 
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table('bitstamp-live')
+    table = dynamodb.Table('')
     
 
     #loggin.DEBUG will print EVERY message in stream
