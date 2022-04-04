@@ -1,4 +1,4 @@
-### A branch to hone DynamoDB functionalities 
+### A branch created to hone DynamoDB functionalities 
 
 ## To do
 
