@@ -1,0 +1,89 @@
+2022-04-01 19:55:37,278 Trying connect to server.
+2022-04-01 19:55:39,239 Connection is open. Proceeding to 'subscribe' function
+2022-04-01 19:55:39,239 sending {'event': 'bts:subscribe', 'data': {'channel': 'live_orders_btcusd'}}
+2022-04-01 19:55:39,506 response: {"event":"bts:subscription_succeeded","channel":"live_orders_btcusd","data":{}}
+2022-04-01 19:55:39,506 Creating tasks
+2022-04-01 19:55:39,507 Initiating tasks
+2022-04-01 19:55:39,508 Initiating ping task
+2022-04-01 19:55:39,508 PING sent
+2022-04-01 19:55:39,509 Stream handler thread set.
+2022-04-01 19:55:39,773 PONG catch
+2022-04-01 19:55:40,776 PING sent
+2022-04-01 19:55:41,040 PONG catch
+2022-04-01 19:55:42,042 PING sent
+2022-04-01 19:55:42,305 PONG catch
+2022-04-01 19:55:43,307 PING sent
+2022-04-01 19:55:43,572 PONG catch
+2022-04-01 19:55:44,575 PING sent
+2022-04-01 19:55:44,839 PONG catch
+2022-04-01 19:55:45,842 PING sent
+2022-04-01 19:55:46,112 PONG catch
+2022-04-01 19:55:47,114 PING sent
+2022-04-01 19:55:47,380 PONG catch
+2022-04-01 19:55:48,381 PING sent
+2022-04-01 19:55:49,145 PONG catch
+2022-04-01 19:55:50,147 PING sent
+2022-04-01 19:55:50,415 PONG catch
+2022-04-01 19:55:51,416 PING sent
+2022-04-01 19:55:51,681 PONG catch
+2022-04-01 19:55:52,682 PING sent
+2022-04-01 19:55:52,948 PONG catch
+2022-04-01 19:55:53,949 PING sent
+2022-04-01 19:55:55,294 PONG catch
+2022-04-01 19:55:56,296 PING sent
+2022-04-01 19:55:56,912 PONG catch
+2022-04-01 19:55:57,914 PING sent
+2022-04-01 19:55:58,337 PONG catch
+2022-04-01 19:55:59,339 PING sent
+2022-04-01 19:55:59,742 PONG catch
+2022-04-01 19:56:00,743 PING sent
+2022-04-01 19:56:01,014 PONG catch
+2022-04-01 19:56:02,015 PING sent
+2022-04-01 19:56:02,279 PONG catch
+2022-04-01 19:56:03,281 PING sent
+2022-04-01 19:56:03,546 PONG catch
+2022-04-01 19:56:04,548 PING sent
+2022-04-01 19:56:04,813 PONG catch
+2022-04-01 19:56:05,815 PING sent
+2022-04-01 19:56:06,080 PONG catch
+2022-04-01 19:56:07,082 PING sent
+2022-04-01 19:56:07,362 PONG catch
+2022-04-01 19:56:08,363 PING sent
+2022-04-01 19:56:08,726 PONG catch
+2022-04-01 19:56:09,727 PING sent
+2022-04-01 19:56:10,201 PONG catch
+2022-04-01 19:56:11,203 PING sent
+2022-04-01 19:56:11,669 PONG catch
+2022-04-01 19:56:12,670 PING sent
+2022-04-01 19:56:12,954 PONG catch
+2022-04-01 19:56:13,956 PING sent
+2022-04-01 19:56:14,219 PONG catch
+2022-04-01 19:56:15,221 PING sent
+2022-04-01 19:56:15,485 PONG catch
+2022-04-01 19:56:16,487 PING sent
+2022-04-01 19:56:16,751 PONG catch
+2022-04-01 19:56:17,752 PING sent
+2022-04-01 19:56:18,016 PONG catch
+2022-04-01 19:56:19,018 PING sent
+2022-04-01 19:56:19,377 Closed by Ctrl-c. Bye!
+2022-04-02 21:55:22,576 Trying connect to server.
+2022-04-02 21:55:24,400 Connection is open. Proceeding to 'subscribe' function
+2022-04-02 21:55:24,400 sending {'event': 'bts:subscribe', 'data': {'channel': 'live_orders_btcusd'}}
+2022-04-02 21:55:24,670 response: {"event":"bts:subscription_succeeded","channel":"live_orders_btcusd","data":{}}
+2022-04-02 21:55:24,670 Creating tasks
+2022-04-02 21:55:24,671 Initiating tasks
+2022-04-02 21:55:24,671 Initiating ping task
+2022-04-02 21:55:24,672 PING sent
+2022-04-02 21:55:24,672 Stream handler thread set.
+2022-04-02 21:55:24,938 PONG catch
+2022-04-02 21:55:25,941 PING sent
+2022-04-02 21:55:26,206 PONG catch
+2022-04-02 21:55:27,209 PING sent
+2022-04-02 21:55:27,476 PONG catch
+2022-04-02 21:55:28,478 PING sent
+2022-04-02 21:55:28,749 PONG catch
+2022-04-02 21:55:29,750 PING sent
+2022-04-02 21:55:30,014 PONG catch
+2022-04-02 21:55:31,016 PING sent
+2022-04-02 21:55:31,285 PONG catch
+2022-04-02 21:55:31,655 Closed by Ctrl-c. Bye!
