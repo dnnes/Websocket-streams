@@ -19,9 +19,9 @@ class GetStream:
         try:
             asyncio.run(self.connect_ws(self.wss_url, self.channels))
         except KeyboardInterrupt:
-            logging.info('Closed by Ctrl-c. Bye!')
+            logging.info('Closed by Ctrl-c. Bye!\n')
         except:
-            logging.error('The main loop was closed. Retrying to connect soon')
+            logging.error('The main loop was closed. Retrying to connect soon.')
             sleep(5)
             asyncio.run(self.connect_ws(self.wss_url, self.channels))
 
@@ -30,28 +30,23 @@ class GetStream:
     #open websocket connection, subscribe to channels, create and await main tasks (messages handler and send ping)
     async def connect_ws(self, wss_url, channels) -> None:
 
-        logging.info('Trying connect to server.')
+        logging.info('Trying to connect to server.')
         
         async for ws in websockets.connect(wss_url, open_timeout=5):
             
-            logging.info('Connection is open. Proceeding to \'subscribe\' function')
+            logging.info('Connection is open. Proceeding to \'subscribe\' function.')
             if not channels == None: await self.subscribe(ws, channels)
-            
-            #await ws.send(json.dumps(subscribe))
-            #await ws.send(json.dumps({"event": "bts:subscribe","data": {"channel": "live_orders_btcusd"}}))
-            #await ws.send(json.dumps({"event": "bts:subscribe","data": {"channel": "live_trades_btcusd"}}))
-            #print(await ws.recv())
-            
-            logging.info('Creating tasks')
+                      
+            logging.info('Creating tasks.')
             stream_thread = await asyncio.to_thread(self.stream_handler, ws)  
             still_alive = asyncio.create_task(self.get_echo(ws), name = 'ping')
             
-            logging.info('Initiating tasks')
+            logging.info('Initiating tasks.')
             try:
                 await asyncio.gather(stream_thread, still_alive)
             except Exception as e:
                 print(e)
-                logging.error('An exception was caught. Maybe the connection was lost. Will iteratively retry connect to server')
+                logging.error('An exception was caught. Maybe the connection was lost. Will iteratively retry connect to server.')
                 pass
     
     #iterates over all elements in channels list and send a json request
@@ -108,7 +103,3 @@ if __name__ == "__main__":
 
     bitstamp = GetStream("wss://ws.bitstamp.net", channels)
     bitstamp.initiate()
-
-
-
-#subs = [{"event": "bts:subscribe","data": {"channel": "live_orderess_"+i}}for i in ['btcusd','ethusd', 'btcusdt', 'ethusdt', 'xrpusdt']]
