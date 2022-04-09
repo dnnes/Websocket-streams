@@ -1,7 +1,8 @@
-### A branch created to hone DynamoDB functionalities 
+### A branch created to improve DynamoDB functionalities 
+This script puts item by item in a dynamodb table. For large data input you can use *BatchWriteItem* instead of *put*
 
 ## To do
 
-- [ ] To handle erros from boto3
+- [x] To handle errors from boto3
 
-- [ ] Understand queue blocks in put and get events
+- [x] Understand queue blocks in put and get events
